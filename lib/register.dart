@@ -14,16 +14,32 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   File? _imageFile;
+  final TextEditingController _nameController = TextEditingController();
 
   void _onImagePicked(File file) {
     setState(() {
       _imageFile = file;
     });
-    print('Image picked: ${file.path}');
   }
 
   void _onGetStarted() {
-    print('Get Started');
+    final name = _nameController.text;
+    if (name.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please enter your name')));
+      return;
+    }
+    if (_imageFile == null) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Please pick an image')));
+      return;
+    }
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
   }
 
   @override
@@ -61,6 +77,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           fontSize: 20)),
                   const SizedBox(height: 8),
                   TextField(
+                    controller: _nameController,
                     style: TextStyle(color: Colors.grey[400]),
                     decoration: InputDecoration(
                         hintStyle: TextStyle(color: Colors.grey[400]),
