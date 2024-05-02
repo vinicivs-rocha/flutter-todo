@@ -1,10 +1,31 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_todo/gradient_border.dart';
 import 'package:flutter_todo/gradient_button.dart';
 import 'package:flutter_todo/profile_image_picker.dart';
 
-class RegisterPage extends StatelessWidget {
+class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
+  
+  @override
+  State<RegisterPage> createState() => _RegisterPageState();
+}
+
+class _RegisterPageState extends State<RegisterPage> {
+  File? _imageFile;
+
+  void _onImagePicked(File file) {
+    setState(() {
+      _imageFile = file;
+    });
+    print('Image picked: ${file.path}');
+  }
+
+  void _onGetStarted() {
+    print('Get Started');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,7 +40,10 @@ class RegisterPage extends StatelessWidget {
           children: [
             Image.asset('assets/scheduling.png', height: 360),
             const SizedBox(height: 12),
-            const ProfileImagePicker(),
+            ProfileImagePicker(
+              imageFile: _imageFile,
+              onImagePicked: _onImagePicked,
+            ),
             const SizedBox(height: 40),
             GradientBorder(
                 child: Container(
@@ -48,8 +72,9 @@ class RegisterPage extends StatelessWidget {
               ),
             )),
             const SizedBox(height: 40),
-            const GradientButton(
-              child: Row(
+            GradientButton(
+              onPressed: _onGetStarted,
+              child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Text("Get Started",

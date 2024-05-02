@@ -5,26 +5,26 @@ import 'package:flutter/services.dart';
 import 'package:flutter_todo/gradient_border.dart';
 import 'package:image_picker/image_picker.dart';
 
-class ProfileImagePicker extends StatefulWidget {
-  const ProfileImagePicker({super.key});
+class ProfileImagePicker extends StatelessWidget {
+  const ProfileImagePicker(
+      {super.key, this.imageFile, required this.onImagePicked});
 
-  @override
-  State<ProfileImagePicker> createState() => _ProfileImagePickerState();
-}
+  final File? imageFile;
+  final void Function(File) onImagePicked;
 
-class _ProfileImagePickerState extends State<ProfileImagePicker> {
-  File? _imageFile;
-
-  Future<void> _pickImage() async {
+  Future<void> _pickImage(BuildContext context) async {
     try {
       final pickedFile =
           await ImagePicker().pickImage(source: ImageSource.gallery);
       if (pickedFile == null) return;
-      setState(() {
-        _imageFile = File(pickedFile.path);
-      });
-    } on PlatformException catch (e) {
-      print('Failed to pick image: $e');
+      onImagePicked(File(pickedFile.path));
+    } on PlatformException {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Failed to pick image'),
+          backgroundColor: Colors.red,
+        ));
+      }
     }
   }
 
@@ -33,10 +33,12 @@ class _ProfileImagePickerState extends State<ProfileImagePicker> {
     return Column(
       children: [
         GestureDetector(
-          onTap: _pickImage,
+          onTap: () {
+            _pickImage(context);
+          },
           child: GradientBorder(
-            padding: _imageFile == null ? 2 : 0,
-            child: _imageFile == null
+            padding: imageFile == null ? 2 : 0,
+            child: imageFile == null
                 ? Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -50,11 +52,11 @@ class _ProfileImagePickerState extends State<ProfileImagePicker> {
                     ))
                 : ClipRRect(
                     borderRadius: BorderRadius.circular(22),
-                    child: Image.file(_imageFile!)),
+                    child: Image.file(imageFile!)),
           ),
         ),
         const SizedBox(height: 4), // Add this line
-        if (_imageFile == null)
+        if (imageFile == null)
           Text('Add picture',
               style: TextStyle(
                   color: Colors.grey[600],
