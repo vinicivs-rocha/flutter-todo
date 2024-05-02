@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_todo/register.dart';
 
 class GradientButton extends StatelessWidget {
   const GradientButton({
     required this.child,
+    required this.onPressed,
     super.key,
   });
 
   final Widget child;
+  final Function() onPressed;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.push(context,
-          MaterialPageRoute(builder: (context) => const RegisterPage())),
+      onTap: onPressed,
       child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(

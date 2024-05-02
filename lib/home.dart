@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_todo/gradient_button.dart';
+import 'package:flutter_todo/register.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -51,8 +52,12 @@ class HomePage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 60),
-              const GradientButton(
-                child: Row(
+              GradientButton(
+                onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const RegisterPage())),
+                child: const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     SizedBox(
