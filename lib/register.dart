@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_todo/gradient_border.dart';
 import 'package:flutter_todo/gradient_button.dart';
 import 'package:flutter_todo/profile_image_picker.dart';
+import 'package:flutter_todo/tasks.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -36,6 +37,7 @@ class _RegisterPageState extends State<RegisterPage> {
     }
     final storedFile = await _storeImage(_imageFile!);
     _storeUserData(name, storedFile.path);
+    _navigateToTasks();
   }
 
   void _displaySnack(String text) {
@@ -54,6 +56,11 @@ class _RegisterPageState extends State<RegisterPage> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('name', name);
     await prefs.setString('image', imagePath);
+  }
+
+  void _navigateToTasks() {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => const TasksPage()));
   }
 
   @override
