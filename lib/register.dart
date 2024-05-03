@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_todo/gradient_border.dart';
 import 'package:flutter_todo/gradient_button.dart';
 import 'package:flutter_todo/profile_image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -22,18 +24,36 @@ class _RegisterPageState extends State<RegisterPage> {
     });
   }
 
-  void _onGetStarted() {
+  void _onGetStarted() async {
     final name = _nameController.text;
     if (name.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please enter your name')));
+      _displaySnack('Please enter your name');
       return;
     }
     if (_imageFile == null) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Please pick an image')));
+      _displaySnack('Please pick an image');
       return;
     }
+    final storedFile = await _storeImage(_imageFile!);
+    _storeUserData(name, storedFile.path);
+  }
+
+  void _displaySnack(String text) {
+    ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(text)));
+  }
+
+  Future<File> _storeImage(File imageFile) async {
+    final directory = await getApplicationDocumentsDirectory();
+    final appFile = File('${directory.path}/profile.png');
+    final imageBytes = await imageFile.readAsBytes();
+    return appFile.writeAsBytes(imageBytes);
+  }
+
+  void _storeUserData(String name, String imagePath) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('name', name);
+    await prefs.setString('image', imagePath);
   }
 
   @override
